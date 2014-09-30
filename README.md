@@ -1,0 +1,4 @@
+Hamilcar
+=======
+
+Haskell Shogi program
