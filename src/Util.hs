@@ -1,20 +1,7 @@
 module Util where
---    import Control.Applicative
     import Control.Arrow
---    import Control.Monad
     import Data.Array
---    import qualified Data.ByteString as BS
     import Data.Char
---    import Data.Function
---    import Data.List
---    import Data.Maybe
---    import Data.Ord
---    import Data.Tuple
---    import Data.Int
---    import Data.Word
---    import System.Environment
---    import System.IO
---    import System.IO.Unsafe
 
     if'(e,t,f)=if e then t else f
     infixl 1 |+>
@@ -32,8 +19,6 @@ module Util where
     modiEn f=toEnum.f.fromEnum
     oppEn::Enum a=>a->a
     oppEn=modiEn (1-)
---    castEn::Bool -> Co
---    castEn=modiEn id
     (//.) a ifs=a//(map (\(i,f)->(i,f(a!i))) ifs)
     showGrid f xs ys = unlines[unwords[show$f x y|x<-xs]|y<-ys]
     unDf=undefined
@@ -45,6 +30,3 @@ module Util where
     fromNotation= toPos.liTu2.map digitToInt ::String->Int
     posFromUSI= fromNotation.liSecond atod ::String->Int
     posToUSI= liSecond dtoa.notation ::Int->String
---    onBdPoss=toPos<$>range((1,1),(9,9)) ::[Pos]
---    notationWrong= show.map(10-).tuLi2.fromPos ::Pos->String
---    posToWrongUSI= liFirst dtoa.notationWrong ::Pos->String

@@ -1,24 +1,13 @@
 module Eval where
---    import Control.Applicative
---    import Control.Arrow
---    import Control.Monad
     import Data.Array
     import qualified Data.ByteString as BS
---    import Data.Char
---    import Data.Function
     import Data.List
---    import Data.Maybe
---    import Data.Ord
---    import Data.Tuple
     import Data.Int
     import Data.Word
---    import System.Environment
---    import System.IO
     import System.IO.Unsafe
     import Util
     import Piece
     import Board
---    import Move
     -- EVAL
     type Va=Int
     type Al=Int
