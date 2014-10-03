@@ -19,26 +19,31 @@ module Usi (
 
     castEn::Bool -> Piece.Co
     castEn = Util.modiEn id
+
     sfenStartpos = ["lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL", "b", "-"]
+
     bdFromSfen s =
-        (Board.Bd (Board.empSqs//sqs) (Board.empHs//hsFromSfen(ss!!2))
-            (Util.if'(ss!!1 == "b", Piece.B, Piece.W)) 0
-            (accumArray (flip(:)) [] Piece.pcBnd$map swap sqs) )
+        (Board.Bd (Board.empSqs // sqs) (Board.empHs // hsFromSfen(ss !! 2))
+            (Util.if' (ss !! 1 == "b", Piece.B, Piece.W)) 0
+            (accumArray (flip (:)) [] Piece.pcBnd $ map swap sqs) )
                 where
                     ss = if length s >= 3 then s else sfenStartpos
                     sqs = sqsFromSfen$ss !! 0
+
     pcFromSfen::Char -> (Piece.Co, Piece.P8)
     pcFromSfen = castEn . isLower &&& fromJust . Piece.p8FromUSI . toUpper
+
     sqsFromSfen sfen = parser sfen (2, 4) Piece.Unp
         where
             parser::[Char] -> (Int, Int) -> Piece.Pro -> [Board.Sq]
             parser [] _ _ =[]
-            parser (x:xs) sq @( r, f) pro
+            parser (x:xs) sq @ ( r, f) pro
                 | isDigit x = parser xs (r, f + digitToInt x) pro
                 | x =='/' = parser xs (r + 1, 4) pro
                 | x =='+' = parser xs sq Piece.Pro
                 | otherwise = ((r * 17 + f), Piece.Pc co pro p8):parser xs (r, f + 1) Piece.Unp
                     where (co, p8) = pcFromSfen x
+
     hsFromSfen sfen = parser sfen 1
         where
             parser [] _ =[]
@@ -47,6 +52,7 @@ module Usi (
                 | isDigit x = parser xs (digitToInt x)
                 | otherwise = (Piece.Pc co Piece.Unp p8, cnt):parser xs 1
                     where (co, p8) = pcFromSfen x
+
     mvFromSfen (Board.Bd sqs _ me _ _) sfen=
         case Piece.p8FromUSI(sfen!!0) of
             Just p8 -> -- is drop
@@ -60,6 +66,7 @@ module Usi (
                     cap = sqs!to
                     isPro = length sfen == 5
                 in (Move.Mv fr to mvPc cap isPro)
+
     readUSIPosition sfens=
         let ws = tail$words sfens
             sbd = Util.if' (head ws == "startpos", ["startpos"], take 3 ws)
@@ -67,8 +74,9 @@ module Usi (
             smvs = drop 1 $ dropWhile (/= "moves") ws
             mvs = mvsFromSfen bd $ smvs
         in (bd, mvs)
+
     usiLoop bd = do
-        sfens<-getLine
+        sfens <- getLine
         let cmds = words sfens
         case head cmds of
             "isready" -> putStrLn$"readyok"
@@ -81,6 +89,7 @@ module Usi (
                 putStrLn $ "bestmove " ++ Move.mvToUSI(head pv)
             otherwise -> putStrLn ("undefined command.." ++ sfens)
         usiLoop bd -- next
+
     mvsFromSfen::Board.Bd -> [String] -> [Move.Mv]
     mvsFromSfen bd [] = []
     mvsFromSfen bd (s:ss) = mv:mvsFromSfen(Board.bdDo bd mv)ss
