@@ -16,7 +16,6 @@ module Eval(
     import Data.Word
     import System.IO.Unsafe
 
-
     type Va = Int
     type Al = Int
     type Be = Int
