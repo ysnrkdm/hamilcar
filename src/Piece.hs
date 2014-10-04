@@ -1,9 +1,9 @@
 module Piece (
     Pos,
-    Co(..),
-    Pro(..),
-    Pc(..),
-    P8(..),
+    Co (..),
+    Pro (..),
+    Pc (..),
+    P8 (..),
     pcBnd,
     pcOppPro,
     pcOppCo,
@@ -14,82 +14,84 @@ module Piece (
     pcRa,
     p8FromUSI,
 ) where
-    -- friends
-    import qualified Util
-    -- GHC
-    -- libraries
-    -- std
-    import Control.Applicative
-    import Control.Arrow
-    import Data.Array
-    import Data.Char
-    import Data.List
+-- friends
+import qualified Util
+-- GHC
 
-    type Pos = Int
+-- libraries
 
-    data Co = B | W deriving (Eq, Ord, Enum, Ix)
-    data Pro = Unp | Pro deriving (Eq, Ord, Enum, Ix)
-    data Pc = Empty | Wall | Pc {co::Co, pro::Pro, p8::P8} deriving (Eq, Ord)
-    data P8 = FU | KY | KE | GI | KI | KA | HI | OU deriving (Eq, Ord, Enum, Ix)
+-- std
+import Control.Applicative
+import Control.Arrow
+import Data.Array
+import Data.Char
+import Data.List
 
-    instance Enum Pc where
-        fromEnum (Pc co pr p8) = fromEnum co * 16 + fromEnum pr * 8 + fromEnum p8
-        toEnum x = Pc (toEnum $ div x 16) (toEnum$div x 8 `mod` 2) (toEnum $ mod x 8)
-    instance Ix Pc where
-        range (p1, p2) = [p1..p2]
-        inRange (c, c') i = c <= i && i <= c'
-        index b @ (c, c') ci
-            | inRange b ci = fromEnum ci - fromEnum c
-            | otherwise= error $ "Pc.index: out of range " ++ show b ++ show ci
-    instance Show Pc where
-        show Empty = "   "
-        show Wall = "XXX"
-        show (Pc co pr p8) = show co ++ show pr ++ show p8
-    instance Show Co where
-        show B = "B"
-        show W = "W"
-    instance Show Pro where
-        show Pro = "P"
-        show Unp = ""
-    instance Show P8 where
-        show = (:[]) . (p8Chars !!) . fromEnum
+type Pos = Int
 
-    p8Chars = "PLNSGBRK"
+data Co = B | W deriving (Eq, Ord, Enum, Ix)
+data Pro = Unp | Pro deriving (Eq, Ord, Enum, Ix)
+data Pc = Empty | Wall | Pc {co :: Co, pro :: Pro, p8 :: P8} deriving (Eq, Ord)
+data P8 = FU | KY | KE | GI | KI | KA | HI | OU deriving (Eq, Ord, Enum, Ix)
 
-    pcBnd = ((Pc B Unp FU), (Pc W Pro OU))
+instance Enum Pc where
+    fromEnum (Pc co pr p8) = fromEnum co * 16 + fromEnum pr * 8 + fromEnum p8
+    toEnum x = Pc (toEnum $ div x 16) (toEnum $ div x 8 `mod` 2) (toEnum $ mod x 8)
+instance Ix Pc where
+    range (p1, p2) = [p1 .. p2]
+    inRange (c, c') i = c <= i && i <= c'
+    index b @ (c, c') ci
+        | inRange b ci = fromEnum ci - fromEnum c
+        | otherwise= error $ "Pc.index: out of range " ++ show b ++ show ci
+instance Show Pc where
+    show Empty = "   "
+    show Wall = "XXX"
+    show (Pc co pr p8) = show co ++ show pr ++ show p8
+instance Show Co where
+    show B = "B"
+    show W = "W"
+instance Show Pro where
+    show Pro = "P"
+    show Unp = ""
+instance Show P8 where
+    show = (: []) . (p8Chars !!) . fromEnum
 
-    pcRa = range pcBnd
+p8Chars = "PLNSGBRK"
 
-    pcOppCo pc = pc {co = Util.oppEn$co pc}
-    pcOppPro pc = pc {pro = Util.oppEn$pro pc}
+pcBnd = (Pc B Unp FU, Pc W Pro OU)
 
-    unpPc pc = pc {pro = Unp}
+pcRa = range pcBnd
 
-    pcCanPro (Pc _ pro p8) = pro == Unp && p8 /= OU && p8 /= KI
+pcOppCo pc = pc {co = Util.oppEn $ co pc}
+pcOppPro pc = pc {pro = Util.oppEn $ pro pc}
 
-    p8FromUSI c = toEnum <$> findIndex (toUpper c ==) p8Chars
+unpPc pc = pc {pro = Unp}
 
-    isSlider p inc = case p8 p of {
-        KA -> even inc;
-        HI -> odd inc;
-        KY -> pro p == Unp;
-        otherwise -> False;
-    }
+pcCanPro (Pc _ pro p8) = pro == Unp && p8 /= OU && p8 /= KI
 
-    blacki = f Unp FU OU is ++ f Pro FU GI(repeat g) ++ f Pro KA HI(repeat k)
-        where
-            f pro s e = zip [Pc B pro p8 | p8 <- [s..e]]
-            is @ [p, _, _, _, g, b, r, k] = map sort
-                [[-17], p, [-35, -33], p ++ b, [-18, -17, -16, -1, 1, 17], [-18, -16, 16, 18], [-17, -1, 1, 17], b ++ r]
+p8FromUSI c = toEnum <$> elemIndex (toUpper c) p8Chars
 
-    pcIncs::Pc -> [Pos]
-    pcIncs = (a!)
-        where
-            a = array pcBnd $ blacki ++ map (pcOppCo *** map negate) blacki
+isSlider p inc = case p8 p of {
+    KA -> even inc;
+    HI -> odd inc;
+    KY -> pro p == Unp;
+    otherwise -> False;
+}
 
-    deltaToInc = (a!)
-        where
-            f n ds = [(d * l, d) | l <- [1..n], d <- ds]
-            a = accumArray ( + ) 0 (-144, 144) $ f 1[-35, -33, 33, 35] ++ f 8 [-18, -17, -16, -1, 1, 16, 17, 18]
+blacki = f Unp FU OU is ++ f Pro FU GI(repeat g) ++ f Pro KA HI(repeat k)
+    where
+        f pro s e = zip [Pc B pro p8 | p8 <- [s .. e]]
+        is @ [p, _, _, _, g, b, r, k] = map sort
+            [[-17], p, [-35, -33], p ++ b, [-18, -17, -16, -1, 1, 17], [-18, -16, 16, 18], [-17, -1, 1, 17], b ++ r]
 
-    strDeltaToInc = Util.showGrid (\ x y -> deltaToInc (x + y * 17)) [-8..8] [-8..8]
+pcIncs :: Pc -> [Pos]
+pcIncs = (a!)
+    where
+        a = array pcBnd $ blacki ++ map (pcOppCo *** map negate) blacki
+
+deltaToInc = (a !)
+    where
+        f n ds = [(d * l, d) | l <- [1 .. n], d <- ds]
+        a = accumArray (+) 0 (-144, 144) $ f 1 [-35, -33, 33, 35] ++ f 8 [-18, -17, -16, -1, 1, 16, 17, 18]
+
+strDeltaToInc = Util.showGrid (\ x y -> deltaToInc (x + y * 17)) [-8 .. 8] [-8 .. 8]
