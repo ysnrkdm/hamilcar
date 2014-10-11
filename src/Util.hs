@@ -17,10 +17,13 @@ module Util (
     liFirst,
     dtoa,
 ) where
-    -- friends
-    -- GHC
-    -- libraries
-    -- std
+-- friends
+
+-- GHC
+
+-- libraries
+
+-- std
 import Control.Arrow
 import Data.Array
 import Data.Char
@@ -29,10 +32,10 @@ if' (e, t, f) = if e then t else f
 
 infixl 1 |+>
 (|+>) True func = func
-(|+>) False _= id
+(|+>) False _ = id
 
 infixl 1 |->
-(|->) b = (|+>)(not b)
+(|->) b = (|+>) (not b)
 
 tuLi2(a, b) = [a, b]
 liTu2[a, b] = (a, b)
