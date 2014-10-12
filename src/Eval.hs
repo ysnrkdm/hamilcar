@@ -1,7 +1,6 @@
-module Eval --(
---    eval
---)
-where
+module Eval (
+    eval
+) where
 -- friends
 import Util ((|->))
 import qualified Piece
@@ -38,8 +37,8 @@ pcVa = (!) $ listArray Piece.pcBnd (a ++ negate `fmap` a)
         a = [
          -- FU , KY , KE , GI , KI , KA , HI  , OU
             100, 430, 450, 640, 690, 890, 1040, 15000,
-         -- FUP, KYP, KEP, GIP, ---, KAP,  HIP,  ---
-            420, 530, 540, 670,  -1, 1150, 1300, -1
+         -- FUP, KYP, KEP, GIP, --, KAP,  HIP,  --
+            420, 530, 540, 670, -1, 1150, 1300, -1
             ]
 
 fv :: Int -> Va
