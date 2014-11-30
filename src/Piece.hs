@@ -46,13 +46,13 @@ instance Ix Pc where
 instance Show Pc where
     show Empty = "   "
     show Wall = "XXX"
-    show (Pc co pr p8) = show co ++ show pr ++ show p8
+    show (Pc co pr p8) = show co ++ show p8 ++ show pr
 instance Show Co where
     show B = "B"
     show W = "W"
 instance Show Pro where
-    show Pro = "P"
-    show Unp = ""
+    show Pro = "+"
+    show Unp = " "
 instance Show P8 where
     show = (: []) . (p8Chars !!) . fromEnum
 
@@ -78,14 +78,33 @@ isSlider p inc = case p8 p of {
     otherwise -> False;
 }
 
-blacki = f Unp FU OU is ++ f Pro FU GI(repeat g) ++ f Pro KA HI(repeat k)
+{-
+ - Returns the move destination/direction for black player.
+ - [(BP ,[-17]),
+ - (BL ,[-17]),
+ - (BN ,[-35,-33]),
+ - (BS ,[-18,-17,-16,16,18]),
+ - (BG ,[-18,-17,-16,-1,1,17]),
+ - (BB ,[-18,-16,16,18]),
+ - (BR ,[-17,-1,1,17]),
+ - (BK ,[-18,-17,-16,-1,1,16,17,18]),
+ - (BP+,[-18,-17,-16,-1,1,17]),
+ - (BL+,[-18,-17,-16,-1,1,17]),
+ - (BN+,[-18,-17,-16,-1,1,17]),
+ - (BS+,[-18,-17,-16,-1,1,17]),
+ - (BB+,[-18,-17,-16,-1,1,16,17,18]),
+ - (BR+,[-18,-17,-16,-1,1,16,17,18])]
+-}
+blacki :: [(Pc, [Pos])]
+blacki = f Unp FU OU is ++ f Pro FU GI (repeat g) ++ f Pro KA HI (repeat k)
     where
-        f pro s e = zip [Pc B pro p8 | p8 <- [s .. e]]
+        f prom s e = zip [Pc B prom p8e | p8e <- [s .. e]]
         is @ [p, _, _, _, g, b, r, k] = map sort
             [[-17], p, [-35, -33], p ++ b, [-18, -17, -16, -1, 1, 17], [-18, -16, 16, 18], [-17, -1, 1, 17], b ++ r]
 
+-- Returns the move destination/direction for given piece
 pcIncs :: Pc -> [Pos]
-pcIncs = (a!)
+pcIncs = (a !)
     where
         a = array pcBnd $ blacki ++ map (pcOppCo *** map negate) blacki
 

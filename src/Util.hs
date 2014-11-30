@@ -28,18 +28,28 @@ import Control.Arrow
 import Data.Array
 import Data.Char
 
+if' :: (Bool, t, t) -> t
 if' (e, t, f) = if e then t else f
 
+(|+>) :: Bool -> (a -> a) -> a -> a
 infixl 1 |+>
 (|+>) True func = func
 (|+>) False _ = id
 
+(|->) :: Bool -> (a -> a) -> a -> a
 infixl 1 |->
 (|->) b = (|+>) (not b)
 
-tuLi2(a, b) = [a, b]
-liTu2[a, b] = (a, b)
+tuLi2 :: (t, t) -> [t]
+tuLi2 (a, b) = [a, b]
+
+liTu2 :: [t] -> (t, t)
+liTu2 [a, b] = (a, b)
+
+liFirst :: (t -> t) -> [t] -> [t]
 liFirst f [a, b] = [f a, b]
+
+liSecond :: (t -> t) -> [t] -> [t]
 liSecond f [a, b] = [a, f b]
 
 convCh f t c = chr $ ord c - ord f + ord t
@@ -55,7 +65,7 @@ oppEn = modiEn (1 -)
 
 showGrid f xs ys = unlines[unwords[show $ f x y | x <- xs] | y <- ys]
 
-unDf = undefined
+--unDf = undefined
 
 toPos (f, r) = (13 - f) + 17 * (r + 1)
 fromPos = posFile &&& posRank

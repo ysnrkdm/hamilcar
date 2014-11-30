@@ -10,3 +10,13 @@ executable hamilcar
   build-depends:   base,
                    bytestring,
                    array
+
+Test-Suite Test
+  type:       exitcode-stdio-1.0
+  main-is:    Main.hs
+  hs-source-dirs:  src/test, src
+  ghc-options:     -W -O2
+  build-depends:    base,
+                    HUnit,
+                    test-framework,
+                    test-framework-hunit

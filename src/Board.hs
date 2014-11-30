@@ -45,7 +45,8 @@ instance Show Bd where
                 8 -> "\tBhand\t=> " ++ prettyHs Piece.B hs
                 9 -> "\tWhand\t=> " ++ prettyHs Piece.W hs
                 otherwise -> ""
-        in unlines $ [row r ++ info r | r <- [2 .. 10]] ++ map (show . second sort) (filter ( ([] /=) . snd) $ assocs pcl)
+        in unlines $ [row r ++ info r | r <- [2 .. 10]] ++
+            map (show . second sort) (filter ( ([] /=) . snd) $ assocs pcl)
 
 empSqs = accumArray seq Piece.Wall (0, 220) $ ( , ) <$> Move.onBdPoss <*> [Piece.Empty] :: Sqs
 
@@ -62,7 +63,8 @@ prettyHs co hs = unwords [show pc ++ show n | (pc, n) <- sideHs co hs]
 
 pclRa co = range (Piece.Pc co Piece.Unp Piece.FU, Piece.Pc co Piece.Pro Piece.HI)
 
-sidePcl co pcl = [(pc, pcl ! pc) | pc <- pclRa co]
+sidePcl :: Piece.Co -> Array Piece.Pc t -> [(Piece.Pc, t)]
+sidePcl color pieces = [(pc, pieces ! pc) | pc <- pclRa color]
 
 empPcl = listArray Piece.pcBnd $ repeat []
 empBd = Board.Bd empSqs empHs Piece.B 0 empPcl

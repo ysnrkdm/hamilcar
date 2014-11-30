@@ -1,5 +1,6 @@
 module Usi (
-    usiLoop
+    usiLoop,
+    bdFromSfen
 ) where
 -- friends
 import qualified Util

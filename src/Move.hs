@@ -24,7 +24,9 @@ data Mv =
         isPro :: Bool
     } deriving (Eq, Ord)
 instance Show Mv where
+    -- Drop is shown as X*00, e.g., dropping black porn at 56 is P*56
     show (Drop to pc) = dropToUSI pc ++ Util.notation to
+    -- Move is shown as 00XX(00)+, e.g., moving white bishop from 66 to 57 is 57WB(66). Promotion adds + at the end.
     show (Mv fr to pc _ isPro) = Util.notation to ++ show pc ++ "(" ++ Util.notation fr ++ ")" ++ Util.if' (isPro, "+", "")
 
 isCapture = (/= Piece.Empty) . cap
