@@ -13,6 +13,7 @@ import Text.Printf (printf)
 import Test.HUnit
 import Test.Framework
 import Test.Framework.Providers.HUnit
+import Data.List
 
 main :: IO ()
 main = do
@@ -26,8 +27,8 @@ moveComp = do
     printf "board is now\n"
     print board
     printf "\n"
-    let moves = MoveGenerator.mvGenFull board
-    let movess = MoveGenerator.mvGenFullN board
+    let moves = sort $ MoveGenerator.mvGenFull board
+    let movess = sort $ MoveGenerator.mvGenFullN board
     print moves
     printf "...\n"
     print movess
