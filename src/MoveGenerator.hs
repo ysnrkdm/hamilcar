@@ -69,9 +69,10 @@ allInNoCheck (Board.Bd sqs _ me _ pcl) =
                                         $ Util.if' (canNoPro pc fr to, [Move.Mv fr to pc cap False], [])
 
 mvGenFullN :: Board.Bd -> [Move.Mv]
-mvGenFullN bd = (allInNoCheckN bd mvAddCaptures) ++ (allInNoCheckN bd mvAddNoCaptures) ++ dropMvs bd
-
-
+mvGenFullN bd =
+    (allInNoCheckN bd mvAddCaptures) ++
+    (allInNoCheckN bd mvAddNoCaptures) ++
+    dropMvs bd
 
 {- Move from cur to the direction of inc.
  - Returns the possible motion from cur to inc
@@ -91,11 +92,6 @@ incMvs me pc sqs from cur mvAdd inc =
     where
         to = cur + inc
         cap = sqs ! to
---        mvAdd =
---            -- Move and promotion, capture if possible
---            Util.if' (canPro pc from to, (Move.Mv from to pc cap True :), id)
---            -- Move and NO promotion, capture if possible
---            $ Util.if' (canNoPro pc from to, [Move.Mv from to pc cap False], [])
 
 mvAddNoCaptures :: Piece.Pc -> Piece.Pos -> Piece.Pos -> Piece.Pc -> [Move.Mv]
 mvAddNoCaptures pc from to cap =

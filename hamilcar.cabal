@@ -5,7 +5,7 @@ cabal-version:     >= 1.2
 
 executable hamilcar
   main-is:         Main.hs
-  hs-source-dirs:  src
+  hs-source-dirs:  src,src/Internal
   ghc-options:     -Wall -O2 -fno-warn-unused-do-bind
   build-depends:   base,
                    bytestring,
@@ -14,7 +14,7 @@ executable hamilcar
 Test-Suite Test
   type:       exitcode-stdio-1.0
   main-is:    Main.hs
-  hs-source-dirs:  src/test, src
+  hs-source-dirs:  src/test, src, src/Internal
   ghc-options:     -W -O2
   build-depends:    base,
                     HUnit,
