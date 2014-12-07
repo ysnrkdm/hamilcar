@@ -15,7 +15,8 @@ import Control.Applicative
 import Data.Array
 
 data Mv =
-      Drop {dropTo :: Piece.Pos, dropPc :: Piece.Pc}
+      Nil
+    | Drop {dropTo :: Piece.Pos, dropPc :: Piece.Pc}
     | Mv {
         fr :: Piece.Pos,
         to :: Piece.Pos,
@@ -28,6 +29,7 @@ instance Show Mv where
     show (Drop to pc) = dropToUSI pc ++ Util.notation to
     -- Move is shown as 00XX(00)+, e.g., moving white bishop from 66 to 57 is 57WB(66). Promotion adds + at the end.
     show (Mv fr to pc _ isPro) = Util.notation to ++ show pc ++ "(" ++ Util.notation fr ++ ")" ++ Util.if' (isPro, "+", "")
+    show Nil = "Nil"
 
 isCapture = (/= Piece.Empty) . cap
 

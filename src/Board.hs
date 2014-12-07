@@ -84,13 +84,14 @@ bdDo bd mv =
             (//. [(pc, subtract 1)])
             Util.oppEn (+ 1)
             (//. [(pc, (to :))])
-        (Move.Mv fr to pc cap isPro) -> let tPc = (isPro |+> Piece.pcOppPro) pc in
-            bdModify bd
-            (// [(fr, Piece.Empty), (to, tPc)])
-            (cap /= Piece.Empty |+> (//. [(Piece.pcOppCo . Piece.unpPc $ cap, (+ 1))]))
-            Util.oppEn (+ 1)
-            ((//. [(tPc, (to :))]) . (//. ((pc, delete fr) :
-                Util.if' (cap /= Piece.Empty, [(cap, delete to)], []))))
+        (Move.Mv fr to pc cap isPro) ->
+            let tPc = (isPro |+> Piece.pcOppPro) pc in
+                bdModify bd
+                (// [(fr, Piece.Empty), (to, tPc)])
+                (cap /= Piece.Empty |+> (//. [(Piece.pcOppCo . Piece.unpPc $ cap, (+ 1))]))
+                Util.oppEn (+ 1)
+                ((//. [(tPc, (to :))]) . (//. ((pc, delete fr) :
+                    Util.if' (cap /= Piece.Empty, [(cap, delete to)], []))))
 bdUndo bd mv =
     case mv of
         (Move.Drop to pc) ->

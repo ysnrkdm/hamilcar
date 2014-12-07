@@ -3,6 +3,7 @@ module Eval (
 ) where
 -- friends
 import Util ((|->))
+import qualified Util
 import qualified Piece
 import qualified Board
 -- GHC
@@ -16,6 +17,7 @@ import Data.List
 import Data.Int
 import Data.Word
 import System.IO.Unsafe
+import Debug.Trace
 
 type Va = Int
 
@@ -24,7 +26,20 @@ type Va = Int
 -- type Be = Int
 
 eval :: Board.Bd -> Va
-eval bd = matVa bd + bonaVa bd
+eval bd =
+--    trace ("Evaluating : " ++ (show bd)) $
+    if terminated bd /= 0
+        then
+--            trace ("Terminated!" ++ (show $ terminated bd))
+            terminated bd
+        else
+            matVa bd + bonaVa bd
+
+-- Simple termination check
+terminated (Board.Bd _ _ co _ pcl)
+    | length (pcl ! Piece.Pc co Piece.Unp Piece.OU) == 0 = -999999
+    | length (pcl ! Piece.Pc (Util.oppEn co) Piece.Unp Piece.OU) == 0 = 999999
+    | otherwise = 0
 
 matVa :: Board.Bd -> Va
 matVa (Board.Bd _ hs co _ pcl) = co == Piece.B |-> negate $
@@ -42,9 +57,7 @@ pcVa = (!) $ listArray Piece.pcBnd (a ++ negate `fmap` a)
             ]
 
 fv :: Int -> Va
-fv i = (fromIntegral :: Int8 -> Int) . (fromIntegral :: Word8 -> Int8) $
-    BS.head $
-    BS.drop i fvbin
+fv i = (fromIntegral :: Int8 -> Int) . (fromIntegral :: Word8 -> Int8) $ BS.index fvbin i
 
 fvbin :: BS.ByteString
 fvbin = unsafePerformIO $ BS.readFile "./fv.bin"
@@ -107,7 +120,8 @@ bonaPos co sqq = if co == Piece.B then a ! sqq else b ! sqq
         b = listArray (0, 220) [(80 -) $ sq `quot` 17 * 9 + sq `rem` 17 - 22 | sq <- [0 .. 220]]
 
 posK :: Board.Pcl -> (Piece.Co, Piece.Co) -> Piece.Pos
-posK pcl (kingColor, pieceColor) = bonaPos pieceColor . head $
+posK pcl (kingColor, pieceColor) =
+    bonaPos pieceColor . head $
     pcl ! Piece.Pc kingColor Piece.Unp Piece.OU
 
 bonaVa :: Board.Bd -> Va

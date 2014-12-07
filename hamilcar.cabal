@@ -4,18 +4,36 @@ Build-Type:        Simple
 cabal-version:     >= 1.2
 
 executable hamilcar
-  main-is:         Main.hs
-  hs-source-dirs:  src,src/Internal
-  ghc-options:     -Wall -O2 -fno-warn-unused-do-bind
-  build-depends:   base,
-                   bytestring,
-                   array
+  main-is:          Main.hs
+  hs-source-dirs:   src,
+                    src/Internal
+  ghc-options:      -O2
+--                    -fllvm
+  build-depends:    base,
+                    bytestring,
+                    array
+
+executable movegenbench
+  main-is:          Main.hs
+  hs-source-dirs:   src/bench,
+                    src,
+                    src/Internal
+  ghc-options:      -O2
+--                    -fllvm
+  build-depends:    base,
+                    bytestring,
+                    array,
+                    criterion
 
 Test-Suite Test
-  type:       exitcode-stdio-1.0
-  main-is:    Main.hs
-  hs-source-dirs:  src/test, src, src/Internal
-  ghc-options:     -W -O2
+  type:             exitcode-stdio-1.0
+  main-is:          Main.hs
+  hs-source-dirs:   src/test,
+                    src/,
+                    src/Internal
+  ghc-options:      -O2
+--                    -fllvm
+                    -prof -fprof-auto -rtsopts
   build-depends:    base,
                     HUnit,
                     test-framework,
